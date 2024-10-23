@@ -1,5 +1,6 @@
 python-telegram-bot==20.3
 camelot-py==0.10.1
+opencv-python==4.8.0.76
 pandas==1.5.3
 numpy==1.23.5
 python-dotenv==1.0.0
