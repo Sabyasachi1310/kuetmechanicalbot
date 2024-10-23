@@ -33,6 +33,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "/qb - Question Bank\n"
         "/hum1105 - HUM-1105 English\n"
         "/syllabus - Syllabus(Full)\n"
+        "/batch22info - Information about the students of KUET ME'22\n"
     )
 
 async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -49,6 +50,7 @@ async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "/qb - Question Bank\n"
         "/hum1105 - HUM-1105 English\n"
         "/syllabus - Syllabus(Full)\n"
+        "/batch22info - Information about the students of KUET ME'22\n"
     )
 
 async def syllabus_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
