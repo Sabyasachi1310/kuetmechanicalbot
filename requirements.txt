@@ -4,3 +4,4 @@ tabula-py==2.5.1
 python-dotenv==1.0.0
 JPype1==1.4.1
 httpx==0.24.1  # Needed for HTTPXRequest in python-telegram-bot
+gunicorn==20.1.0
