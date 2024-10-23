@@ -3,7 +3,7 @@ from telegram.request import HTTPXRequest
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes, ConversationHandler, MessageHandler, filters
 import pandas as pd
-import tabula
+import camelot
 import os
 from dotenv import load_dotenv
 
@@ -54,32 +54,39 @@ async def syllabus_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     await context.bot.send_document(chat_id=chat_id, document=file_id)
 
 #BATCH 22 DATA
-file_id = '1wFAki8uOzHymF3Ap1556YeneJ2gQUR-z'  # Your actual file ID
-pdf_url = f'https://drive.google.com/uc?id={file_id}'
+import camelot
+import pandas as pd
 
-# Step 2: Read the PDF from the URL
-dfs = tabula.read_pdf(pdf_url, pages='all', multiple_tables=True)
-dfs[0] = dfs[0][1:] 
+local_pdf_path = 'ME-KUET-22.pdf'
+
+# Step 1: Read the PDF using Camelot
+tables = camelot.read_pdf(local_pdf_path, pages='all')
+
+
+dfs = [table.df for table in tables]
+dfs[0] = dfs[0][1:]  # Remove first row if needed
+
+# Step 2: Set headers for each table
 header = ['Roll', 'Name', 'Blood type', 'Hometown', 'Phone No.', 'Hall']
 for df in dfs:
-    df.columns=header
+    df.columns = header
 
-combined_df_list=[dfs[0],dfs[1],dfs[2]]
+# Step 3: Combine the DataFrames into one
+combined_df_list = [dfs[0], dfs[1], dfs[2]]
 combined_df = pd.concat(combined_df_list, axis=0)
 
-combined_df['Phone No.'] = combined_df['Phone No.'].replace({pd.NA: 0})  # Replace NaN with 0, or choose an appropriate value
-combined_df['Phone No.'] = combined_df['Phone No.'].astype(int, errors='ignore')  # Use 'ignore' to prevent errors on non-numeric values
+# Step 4: Clean the 'Phone No.' column
+combined_df['Phone No.'] = combined_df['Phone No.'].replace({pd.NA: 0, '': 0})  # Replace NaN and empty strings with 0
+combined_df['Phone No.'] = combined_df['Phone No.'].astype(str)  # Convert to string for further cleaning
 
-
-combined_df['Phone No.'] = combined_df['Phone No.'].astype(str)
-
-# Step 2: Remove the '.0' part from the end of any phone number
-# This regex will find and remove '.0' at the end of the phone numbers
+# Remove trailing '.0' and country code '88'
 combined_df['Phone No.'] = combined_df['Phone No.'].str.replace(r'\.0$', '', regex=True)
 combined_df['Phone No.'] = combined_df['Phone No.'].str.replace(r'^88', '', regex=True)
 
-# Step 3: Convert the cleaned phone numbers back to integers (if needed)
-combined_df['Phone No.'] = combined_df['Phone No.'].astype(int)
+# Step 5: Convert cleaned phone numbers to integers if needed
+# Filter out any rows where 'Phone No.' is still an empty string after cleaning
+combined_df = combined_df[combined_df['Phone No.'] != '']
+combined_df['Phone No.'] = combined_df['Phone No.'].astype(int, errors='ignore')
 
 
 # Define states for the conversation
