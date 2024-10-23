@@ -1,5 +1,6 @@
 python-telegram-bot==20.3
 camelot-py==0.10.1
+Flask
 PyPDF2==2.12.1
 ghostscript
 opencv-python==4.8.0.76
