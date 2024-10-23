@@ -6,6 +6,10 @@ import pandas as pd
 import camelot
 import os
 from dotenv import load_dotenv
+from flask import Flask
+
+
+app = Flask(__name__)
 
 load_dotenv()
 BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
@@ -823,5 +827,4 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
-    port = int(os.environ.get("PORT", 5000))  # Render will provide the PORT environment variable
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=30000) 
