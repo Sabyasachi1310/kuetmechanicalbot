@@ -1,5 +1,6 @@
 python-telegram-bot==20.3
-pandas==2.1.1
+pandas==1.5.3
+numpy==1.23.5
 tabula-py==2.5.1
 python-dotenv==1.0.0
 JPype1==1.4.1
