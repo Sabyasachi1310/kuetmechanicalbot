@@ -25,18 +25,14 @@ def webhook():
     update = request.get_json(force=True)
     logging.info(f'Incoming update: {update}')
     
-    update = telegram.Update.de_json(update, bot)
+    update = telegram.Update.de_json(request.get_json(force=True), bot)
 
-    # Log incoming updates
-     if update.message:
-        chat_id = update.message.chat.id
+    # Incorrect indentation here
+    if update.message:
+        chat_id = update.message.chat_id
         text = update.message.text
-        logging.info(f'Message from {chat_id}: {text}')
-        
-        # Send a response asynchronously
-        thread = Thread(target=send_message, args=(chat_id, text))
-        thread.start()
-
+        asyncio.run(send_message_async(chat_id, text))
+    
     return 'ok', 200
 
 # Function to start the Flask server
