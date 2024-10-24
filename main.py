@@ -780,7 +780,7 @@ async def button_callback_hum1105(update: Update, context: ContextTypes.DEFAULT_
 
 
 # Main function to set up the bot
-def main() -> None:
+async def main() -> None:
     # Create the bot application
     application = ApplicationBuilder().token(BOT_TOKEN).build()
     application.add_handler(CommandHandler('Start', start))
@@ -832,11 +832,8 @@ if __name__ == '__main__':
     # Start the Flask server to keep the bot alive and handle webhooks
     keep_alive()
 
-    # Set the webhook (Telegram will start sending updates to this URL)
-     # Set the webhook asynchronously
-    asyncio.run(set_webhook())  # Await the setting of the webhook
+    # Set the webhook
+    set_webhook()
 
-    # Start the bot application (it will handle webhooks)
-    asyncio.run(main())  
-
-    print("Bot is running with webhook...")
+    # Run the main function
+    asyncio.run(main())  # Now it is async
