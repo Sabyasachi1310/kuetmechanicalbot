@@ -1,21 +1,23 @@
 from telegram.request import HTTPXRequest
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+import telegram
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes, ConversationHandler, MessageHandler, filters
 import pandas as pd
 import camelot
 import os
 from dotenv import load_dotenv
 from keep_alive import keep_alive
-keep_alive()
 
 
 
 load_dotenv()
 BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
-
+bot = telegram.Bot(token=BOT_TOKEN)
 request = HTTPXRequest(connect_timeout=100, read_timeout=100)
 
-
+WEBHOOK_URL = 'https://kuetmechanicalbot.onrender.com/webhook'
+def set_webhook():
+    bot.set_webhook(url=WEBHOOK_URL)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(
@@ -827,5 +829,14 @@ def main() -> None:
     application.run_polling()
 
 if __name__ == '__main__':
-    main()
-   
+    # Start the Flask server to keep the bot alive and handle webhooks
+    keep_alive()
+
+    # Set the webhook (Telegram will start sending updates to this URL)
+    set_webhook()
+
+    # Optionally, run other bot logic (if any)
+    main()  # Assuming you have additional bot setup in main()
+
+    print("Bot is running with webhook...")
+
