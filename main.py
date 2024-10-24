@@ -16,7 +16,7 @@ BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 bot = telegram.Bot(token=BOT_TOKEN)
 request = HTTPXRequest(connect_timeout=100, read_timeout=100)
 
-WEBHOOK_URL = 'https://kuetmechanicalbot.onrender.com/webhook'
+WEBHOOK_URL = 'https://api.render.com/deploy/srv-csckbl2j1k6c739c4mo0?key=UBwowdNvJVw/webhook'
 async def set_webhook():
     await bot.set_webhook(url=WEBHOOK_URL)
 
