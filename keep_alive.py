@@ -1,5 +1,6 @@
 from flask import Flask, request
 from threading import Thread
+from dotenv import load_dotenv
 import telegram
 import os
 
@@ -7,7 +8,8 @@ import os
 app = Flask(__name__)
 
 # Your bot's token (ensure you store this securely, such as in an environment variable)
-TOKEN = 'YOUR_BOT_TOKEN'
+load_dotenv()
+TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 bot = telegram.Bot(token=TOKEN)
 
 # Route to confirm the server is alive
