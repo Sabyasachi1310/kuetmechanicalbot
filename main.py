@@ -857,6 +857,6 @@ async def main() -> None:
 if __name__ == '__main__':
     # Start the Flask server to keep the bot alive and handle webhooks
     #keep_alive()
-     app.run(debug=True)
+    app.run(debug=True)
     # Run the main event loop
     asyncio.run(main())
