@@ -1,9 +1,11 @@
 from flask import Flask, request
 from threading import Thread
+import logging
 from dotenv import load_dotenv
 import telegram
 import os
 
+logging.basicConfig(level=logging.INFO)
 # Initialize the Flask app
 app = Flask(__name__)
 
@@ -20,14 +22,20 @@ def index():
 # Route to handle webhook requests from Telegram
 @app.route('/webhook', methods=['POST'])
 def webhook():
-    update = telegram.Update.de_json(request.get_json(force=True), bot)
+    update = request.get_json(force=True)
+    logging.info(f'Incoming update: {update}')
+    
+    update = telegram.Update.de_json(update, bot)
 
     # Log incoming updates
-    if update.message:
-        chat_id = update.message.chat_id
+     if update.message:
+        chat_id = update.message.chat.id
         text = update.message.text
-        print(f"Received message: {text}")  # Debug log
-        bot.send_message(chat_id=chat_id, text=f"You said: {text}")
+        logging.info(f'Message from {chat_id}: {text}')
+        
+        # Send a response asynchronously
+        thread = Thread(target=send_message, args=(chat_id, text))
+        thread.start()
 
     return 'ok', 200
 
