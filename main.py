@@ -825,8 +825,7 @@ def main() -> None:
     application.add_handler(CallbackQueryHandler(button_callback_hum1105, pattern='^hum1105_'))
 
     application.add_handler(CommandHandler("qb", qb_command))
-    # Start polling to handle updates
-    application.run_polling()
+    
 
 if __name__ == '__main__':
     # Start the Flask server to keep the bot alive and handle webhooks
