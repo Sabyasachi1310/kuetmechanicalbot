@@ -1,4 +1,5 @@
 from telegram.request import HTTPXRequest
+import asyncio
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 import telegram
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes, ConversationHandler, MessageHandler, filters
@@ -832,10 +833,10 @@ if __name__ == '__main__':
     keep_alive()
 
     # Set the webhook (Telegram will start sending updates to this URL)
-    set_webhook()
+     # Set the webhook asynchronously
+    asyncio.run(set_webhook())  # Await the setting of the webhook
 
-    # Optionally, run other bot logic (if any)
-    main()  # Assuming you have additional bot setup in main()
+    # Start the bot application (it will handle webhooks)
+    asyncio.run(main())  
 
     print("Bot is running with webhook...")
-
