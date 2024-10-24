@@ -3,7 +3,6 @@ from threading import Thread
 from dotenv import load_dotenv
 import telegram
 import os
-import asyncio
 
 # Initialize the Flask app
 app = Flask(__name__)
@@ -18,23 +17,17 @@ bot = telegram.Bot(token=TOKEN)
 def index():
     return "Alive"
 
-# Asynchronous function to send a message
-async def send_message_async(chat_id, text):
-    await bot.send_message(chat_id=chat_id, text=f"You said: {text}")
-
-# Synchronous function to handle the webhook requests and run async operations
+# Route to handle webhook requests from Telegram
 @app.route('/webhook', methods=['POST'])
 def webhook():
-    # Process the incoming update from Telegram
     update = telegram.Update.de_json(request.get_json(force=True), bot)
 
-    # Example: handle a message (you can expand this to handle more updates)
+    # Log incoming updates
     if update.message:
         chat_id = update.message.chat_id
         text = update.message.text
-
-        # Run the async function within the synchronous context
-        asyncio.run(send_message_async(chat_id, text))
+        print(f"Received message: {text}")  # Debug log
+        bot.send_message(chat_id=chat_id, text=f"You said: {text}")
 
     return 'ok', 200
 
