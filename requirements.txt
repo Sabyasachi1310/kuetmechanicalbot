@@ -7,6 +7,5 @@ opencv-python==4.8.0.76
 pandas==1.5.3
 numpy==1.23.5
 python-dotenv==1.0.0
-JPype1==1.4.1
 httpx==0.24.1  # Needed for HTTPXRequest in python-telegram-bot
-gunicorn==20.1.0
+
