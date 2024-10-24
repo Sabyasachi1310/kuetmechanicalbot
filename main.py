@@ -88,28 +88,30 @@ async def syllabus_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     await context.bot.send_document(chat_id=chat_id, document=file_id)
 
 #BATCH 22 DATA
-import camelot
+import pdfplumber
 import pandas as pd
 
 local_pdf_path = 'ME-KUET-22.pdf'
 
-# Step 1: Read the PDF using Camelot
-tables = camelot.read_pdf(local_pdf_path, pages='all')
+# Step 1: Read the PDF using pdfplumber
+dfs = []
+with pdfplumber.open(local_pdf_path) as pdf:
+    for page in pdf.pages:
+        # Extract tables from each page
+        tables = page.extract_tables()
+        for table in tables:
+            # Convert the table to a DataFrame
+            df = pd.DataFrame(table[1:], columns=table[0])  # Use the first row as headers
+            dfs.append(df)
 
+# Step 2: Combine the DataFrames into one
+combined_df = pd.concat(dfs, ignore_index=True)
 
-dfs = [table.df for table in tables]
-dfs[0] = dfs[0][1:]  # Remove first row if needed
-
-# Step 2: Set headers for each table
+# Step 3: Clean the DataFrame
 header = ['Roll', 'Name', 'Blood type', 'Hometown', 'Phone No.', 'Hall']
-for df in dfs:
-    df.columns = header
+combined_df.columns = header
 
-# Step 3: Combine the DataFrames into one
-combined_df_list = [dfs[0], dfs[1], dfs[2]]
-combined_df = pd.concat(combined_df_list, axis=0)
-
-# Step 4: Clean the 'Phone No.' column
+# Clean the 'Phone No.' column
 combined_df['Phone No.'] = combined_df['Phone No.'].replace({pd.NA: 0, '': 0})  # Replace NaN and empty strings with 0
 combined_df['Phone No.'] = combined_df['Phone No.'].astype(str)  # Convert to string for further cleaning
 
@@ -117,11 +119,9 @@ combined_df['Phone No.'] = combined_df['Phone No.'].astype(str)  # Convert to st
 combined_df['Phone No.'] = combined_df['Phone No.'].str.replace(r'\.0$', '', regex=True)
 combined_df['Phone No.'] = combined_df['Phone No.'].str.replace(r'^88', '', regex=True)
 
-# Step 5: Convert cleaned phone numbers to integers if needed
-# Filter out any rows where 'Phone No.' is still an empty string after cleaning
+# Step 4: Filter out empty phone numbers and convert to integers if needed
 combined_df = combined_df[combined_df['Phone No.'] != '']
 combined_df['Phone No.'] = combined_df['Phone No.'].astype(int, errors='ignore')
-
 
 # Define states for the conversation
 ROLL_NUMBER, = range(1)
