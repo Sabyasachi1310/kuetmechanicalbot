@@ -16,8 +16,8 @@ bot = telegram.Bot(token=BOT_TOKEN)
 request = HTTPXRequest(connect_timeout=100, read_timeout=100)
 
 WEBHOOK_URL = 'https://kuetmechanicalbot.onrender.com/webhook'
-def set_webhook():
-    bot.set_webhook(url=WEBHOOK_URL)
+async def set_webhook():
+    await bot.set_webhook(url=WEBHOOK_URL)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(
