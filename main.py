@@ -1,4 +1,3 @@
-
 from telegram.request import HTTPXRequest
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes, ConversationHandler, MessageHandler, filters
@@ -7,10 +6,9 @@ import camelot
 import os
 from dotenv import load_dotenv
 from keep_alive import keep_alive
-from flask import Flask
+keep_alive()
 
 
-app = Flask(__name__)
 
 load_dotenv()
 BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
@@ -830,4 +828,4 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
-    app.run(host='0.0.0.0', port=305467) 
+   
