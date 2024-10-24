@@ -826,14 +826,11 @@ async def main() -> None:
     application.add_handler(CallbackQueryHandler(button_callback_hum1105, pattern='^hum1105_'))
 
     application.add_handler(CommandHandler("qb", qb_command))
-    
+    await set_webhook()
 
 if __name__ == '__main__':
     # Start the Flask server to keep the bot alive and handle webhooks
     keep_alive()
 
-    # Set the webhook
-    set_webhook()
-
-    # Run the main function
-    asyncio.run(main())  # Now it is async
+    # Run the main event loop
+    asyncio.run(main())
