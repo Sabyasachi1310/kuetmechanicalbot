@@ -3,6 +3,7 @@ from threading import Thread
 from dotenv import load_dotenv
 import telegram
 import os
+import asyncio
 
 # Initialize the Flask app
 app = Flask(__name__)
@@ -17,7 +18,11 @@ bot = telegram.Bot(token=TOKEN)
 def index():
     return "Alive"
 
-# Route to handle webhook requests from Telegram
+# Asynchronous function to send a message
+async def send_message_async(chat_id, text):
+    await bot.send_message(chat_id=chat_id, text=f"You said: {text}")
+
+# Synchronous function to handle the webhook requests and run async operations
 @app.route('/webhook', methods=['POST'])
 def webhook():
     # Process the incoming update from Telegram
@@ -27,7 +32,9 @@ def webhook():
     if update.message:
         chat_id = update.message.chat_id
         text = update.message.text
-        bot.send_message(chat_id=chat_id, text=f"You said: {text}")
+
+        # Run the async function within the synchronous context
+        asyncio.run(send_message_async(chat_id, text))
 
     return 'ok', 200
 
