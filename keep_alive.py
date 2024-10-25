@@ -37,7 +37,6 @@ def webhook():
 async def send_message_async(chat_id, text):
     await bot.send_message(chat_id=chat_id, text=text)
 
-# Start the Flask server, checking for the PORT environment variable
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))  # Use PORT from environment or default to 5000
-    app.run(host='0.0.0.0', port=port, debug=True)
+def keep_alive():
+    port = int(os.environ.get('PORT', 5000))  # Use the port provided by Render
+    app.run(host='0.0.0.0', port=port, debug=True)  # Bind to 0.0.0.0
