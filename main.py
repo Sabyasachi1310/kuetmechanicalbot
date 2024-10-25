@@ -6,7 +6,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandle
 import pandas as pd
 import os
 from dotenv import load_dotenv
-from keep_alive import keep_alive
+#from keep_alive import keep_alive
 
 import logging
 from flask import Flask, request
