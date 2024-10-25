@@ -1,15 +1,14 @@
 from flask import Flask, request
-from threading import Thread
 import logging
 from dotenv import load_dotenv
 import telegram
 import os
+import asyncio  # Import asyncio for asynchronous operations
 
 logging.basicConfig(level=logging.INFO)
-# Initialize the Flask app
 app = Flask(__name__)
 
-# Your bot's token (ensure you store this securely, such as in an environment variable)
+# Load environment variables
 load_dotenv()
 TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 bot = telegram.Bot(token=TOKEN)
@@ -27,19 +26,18 @@ def webhook():
     
     update = telegram.Update.de_json(request.get_json(force=True), bot)
 
-    # Incorrect indentation here
     if update.message:
         chat_id = update.message.chat_id
         text = update.message.text
-        asyncio.run(send_message_async(chat_id, text))
+        asyncio.run(send_message_async(chat_id, text))  # Run async function to send message
     
     return 'ok', 200
 
-# Function to start the Flask server
-def run():
-    app.run(host='0.0.0.0', port=8080)
+# Function to send a message asynchronously
+async def send_message_async(chat_id, text):
+    await bot.send_message(chat_id=chat_id, text=text)
 
-# Function to start the Flask server in a separate thread
-def keep_alive():
-    t = Thread(target=run)
-    t.start()
+# Start the Flask server, checking for the PORT environment variable
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))  # Use PORT from environment or default to 5000
+    app.run(host='0.0.0.0', port=port, debug=True)
