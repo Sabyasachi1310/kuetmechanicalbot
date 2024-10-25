@@ -98,22 +98,19 @@ with pdfplumber.open(local_pdf_path) as pdf:
     for page in pdf.pages:
         text = page.extract_text()
         
-        # Process text to DataFrame if it meets the criteria for a table (customize this)
-        # Example: split the lines to simulate extracting structured data
         if text:  # Ensure page has text
             lines = text.split("\n")
-            data = [line.split() for line in lines]  # Customize based on actual format
+            # Split each line into columns
+            data = [line.split() for line in lines if line.strip()]  # Customize split logic based on actual format
             df = pd.DataFrame(data)
-            dfs.append(df)  # Append to list of dataframes
+            
+            # Append only DataFrames with expected number of columns (6 here)
+            if df.shape[1] == 6:  
+                df.columns = ['Roll', 'Name', 'Blood type', 'Hometown', 'Phone No.', 'Hall']
+                dfs.append(df)
 
-# Check if any DataFrames were extracted
+# Step 3: Combine the DataFrames into one if any were found
 if dfs:
-    # Set headers if needed
-    header = ['Roll', 'Name', 'Blood type', 'Hometown', 'Phone No.', 'Hall']
-    for df in dfs:
-        df.columns = header  # Ensure each DataFrame has the correct headers
-
-    # Step 3: Combine the DataFrames into one if any were found
     combined_df = pd.concat(dfs, axis=0, ignore_index=True)
     
     # Step 4: Clean the 'Phone No.' column
@@ -123,9 +120,9 @@ if dfs:
     combined_df['Phone No.'] = combined_df['Phone No.'].str.replace(r'^88', '', regex=True)
     combined_df = combined_df[combined_df['Phone No.'] != '']
     combined_df['Phone No.'] = combined_df['Phone No.'].astype(int, errors='ignore')
-
+    
 else:
-    print("No tables found in the PDF.")
+    print("No tables with the expected structure were found in the PDF.")
 
 # Define states for the conversation
 ROLL_NUMBER, = range(1)
