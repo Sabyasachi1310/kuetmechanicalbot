@@ -87,40 +87,45 @@ async def syllabus_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     await context.bot.send_document(chat_id=chat_id, document=file_id)
 
 #BATCH 22 DATA
-import pdfplumber
 import pandas as pd
+import pdfplumber
 
 local_pdf_path = 'ME-KUET-22.pdf'
 
 # Step 1: Read the PDF using pdfplumber
-dfs = []
+dfs = []  # List to store dataframes for each page's table
 with pdfplumber.open(local_pdf_path) as pdf:
     for page in pdf.pages:
-        # Extract tables from each page
-        tables = page.extract_tables()
-        for table in tables:
-            # Convert the table to a DataFrame
-            df = pd.DataFrame(table[1:], columns=table[0])  # Use the first row as headers
-            dfs.append(df)
+        text = page.extract_text()
+        
+        # Process text to DataFrame if it meets the criteria for a table (customize this)
+        # Example: split the lines to simulate extracting structured data
+        if text:  # Ensure page has text
+            lines = text.split("\n")
+            data = [line.split() for line in lines]  # Customize based on actual format
+            df = pd.DataFrame(data)
+            dfs.append(df)  # Append to list of dataframes
 
-# Step 2: Combine the DataFrames into one
-combined_df = pd.concat(dfs, ignore_index=True)
+# Check if any DataFrames were extracted
+if dfs:
+    # Set headers if needed
+    header = ['Roll', 'Name', 'Blood type', 'Hometown', 'Phone No.', 'Hall']
+    for df in dfs:
+        df.columns = header  # Ensure each DataFrame has the correct headers
 
-# Step 3: Clean the DataFrame
-header = ['Roll', 'Name', 'Blood type', 'Hometown', 'Phone No.', 'Hall']
-combined_df.columns = header
+    # Step 3: Combine the DataFrames into one if any were found
+    combined_df = pd.concat(dfs, axis=0, ignore_index=True)
+    
+    # Step 4: Clean the 'Phone No.' column
+    combined_df['Phone No.'] = combined_df['Phone No.'].replace({pd.NA: 0, '': 0})
+    combined_df['Phone No.'] = combined_df['Phone No.'].astype(str)
+    combined_df['Phone No.'] = combined_df['Phone No.'].str.replace(r'\.0$', '', regex=True)
+    combined_df['Phone No.'] = combined_df['Phone No.'].str.replace(r'^88', '', regex=True)
+    combined_df = combined_df[combined_df['Phone No.'] != '']
+    combined_df['Phone No.'] = combined_df['Phone No.'].astype(int, errors='ignore')
 
-# Clean the 'Phone No.' column
-combined_df['Phone No.'] = combined_df['Phone No.'].replace({pd.NA: 0, '': 0})  # Replace NaN and empty strings with 0
-combined_df['Phone No.'] = combined_df['Phone No.'].astype(str)  # Convert to string for further cleaning
-
-# Remove trailing '.0' and country code '88'
-combined_df['Phone No.'] = combined_df['Phone No.'].str.replace(r'\.0$', '', regex=True)
-combined_df['Phone No.'] = combined_df['Phone No.'].str.replace(r'^88', '', regex=True)
-
-# Step 4: Filter out empty phone numbers and convert to integers if needed
-combined_df = combined_df[combined_df['Phone No.'] != '']
-combined_df['Phone No.'] = combined_df['Phone No.'].astype(int, errors='ignore')
+else:
+    print("No tables found in the PDF.")
 
 # Define states for the conversation
 ROLL_NUMBER, = range(1)
