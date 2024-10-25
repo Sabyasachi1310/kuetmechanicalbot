@@ -6,7 +6,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandle
 import pandas as pd
 import os
 from dotenv import load_dotenv
-#from keep_alive import keep_alive
+from keep_alive import keep_alive
 
 import logging
 from flask import Flask, request
@@ -857,7 +857,7 @@ async def main() -> None:
 
 if __name__ == '__main__':
     # Start the Flask server to keep the bot alive and handle webhooks
-    #keep_alive()
+    keep_alive()
     app.run(debug=True)
     # Run the main event loop
     asyncio.run(main())
