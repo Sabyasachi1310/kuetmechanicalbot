@@ -7,11 +7,10 @@ import pandas as pd
 import os
 from dotenv import load_dotenv
 from keep_alive import keep_alive
-
 import logging
-from flask import Flask, request
 
-app = Flask(__name__)
+
+
 
 # Configure logging
 logging.basicConfig(
@@ -22,17 +21,6 @@ logging.basicConfig(
         logging.StreamHandler()
     ]
 )
-
-@app.route('/webhook', methods=['POST'])
-def webhook():
-    update = request.json
-    logging.info(f"Received update: {update}")  # Log the incoming update
-    handle_update(update)  # Call your function to handle the update
-    return '', 200
-
-def handle_update(update):
-    # Your bot logic here
-    pass
 
 
 
@@ -853,11 +841,9 @@ async def main() -> None:
     application.add_handler(CallbackQueryHandler(button_callback_hum1105, pattern='^hum1105_'))
 
     application.add_handler(CommandHandler("qb", qb_command))
-    await set_webhook()
-
+    application.run_polling()
 if __name__ == '__main__':
     # Start the Flask server to keep the bot alive and handle webhooks
     keep_alive()
-    app.run(debug=True)
     # Run the main event loop
     asyncio.run(main())
